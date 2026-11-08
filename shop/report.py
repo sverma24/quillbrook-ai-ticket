@@ -1,11 +1,15 @@
 """Reports for the shop owner.
 
     python3 -m shop.report items     revenue per service, best first
+    python3 -m shop.report monthly   revenue per month, oldest first
 """
 import sys
 from collections import defaultdict
+from zoneinfo import ZoneInfo
 
 from shop.orders import load_orders
+
+SHOP_TZ = ZoneInfo("America/Denver")
 
 
 def revenue_by_item(orders):
@@ -16,10 +20,23 @@ def revenue_by_item(orders):
     return dict(sorted(totals.items(), key=lambda kv: kv[1], reverse=True))
 
 
+def revenue_by_month(orders):
+    """Paid revenue per calendar month, keyed "YYYY-MM" (Denver time), oldest first."""
+    totals = defaultdict(lambda: 0)
+    for o in orders:
+        if o.status == "paid":
+            totals[o.created_at.astimezone(SHOP_TZ).strftime("%Y-%m")] += o.total
+    return dict(sorted(totals.items()))
+
+
 def main(argv):
     if argv[:1] == ["items"]:
         for item, total in revenue_by_item(load_orders()).items():
             print(f"{item:<22} ${total:>9,.2f}")
+        return 0
+    if argv[:1] == ["monthly"]:
+        for month, total in revenue_by_month(load_orders()).items():
+            print(f"{month}   ${total:,.2f}")
         return 0
     print(__doc__.strip())
     return 1
