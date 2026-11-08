@@ -9,3 +9,14 @@ Run the reports and the tests (Python 3.9+, standard library only, no sign-ups o
     python3 -m unittest
 
 `TICKET.md` is the ticket Claude Code works on in the video.
+
+## Branches
+
+- `main`: the starting point, the ticket as it was handed over.
+- `solution`: what Claude Code wrote in the video, after the owner confirmed the shop closes its books on Denver time (three tests, `python3 -m shop.report monthly`).
+
+Try the ticket yourself on `main` first, then compare with `solution`.
+
+## License
+
+MIT
